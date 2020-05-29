@@ -28,7 +28,7 @@ namespace Leome.Pages.People
                 return NotFound();
             }
 
-            Person = await _context.Person.FirstOrDefaultAsync(m => m.ID == id);
+            Person = await _context.People.FirstOrDefaultAsync(m => m.ID == id);
 
             if (Person == null)
             {

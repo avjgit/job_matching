@@ -29,7 +29,7 @@ namespace Leome.Pages.People
                 return NotFound();
             }
 
-            Person = await _context.Person.FirstOrDefaultAsync(m => m.ID == id);
+            Person = await _context.People.FirstOrDefaultAsync(m => m.ID == id);
 
             if (Person == null)
             {
@@ -45,11 +45,11 @@ namespace Leome.Pages.People
                 return NotFound();
             }
 
-            Person = await _context.Person.FindAsync(id);
+            Person = await _context.People.FindAsync(id);
 
             if (Person != null)
             {
-                _context.Person.Remove(Person);
+                _context.People.Remove(Person);
                 await _context.SaveChangesAsync();
             }
 

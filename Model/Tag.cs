@@ -7,7 +7,7 @@ namespace Leome.Model
 {
     public enum TagType
     {
-        Industry, Language, Skill
+        Industry, Language, Skill, Undefined
     }
 
     public class Tag

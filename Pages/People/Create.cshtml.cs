@@ -36,7 +36,7 @@ namespace Leome.Pages.People
                 return Page();
             }
 
-            _context.Person.Add(Person);
+            _context.People.Add(Person);
             await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");

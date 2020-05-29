@@ -23,7 +23,7 @@ namespace Leome.Pages.People
 
         public async Task OnGetAsync()
         {
-            Person = await _context.Person.ToListAsync();
+            Person = await _context.People.ToListAsync();
         }
     }
 }

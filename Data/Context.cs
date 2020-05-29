@@ -14,6 +14,6 @@ namespace Leome.Data
         {
         }
 
-        public DbSet<Leome.Model.Person> Person { get; set; }
+        public DbSet<Leome.Model.Person> People { get; set; }
     }
 }
