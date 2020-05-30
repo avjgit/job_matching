@@ -1,0 +1,109 @@
+﻿using Leome.Model;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Leome.Data
+{
+    public static class DbInitializer
+    {
+        public static void Initialize(Context context)
+        {
+            context.Database.EnsureCreated();
+
+            if (context.People.Any()) return;   // DB has been seeded
+
+            context.People.AddRange(new Person[]
+            {
+                new Person{ FirstMidName = "Liana", LastName = "Leer" },
+                new Person{ FirstMidName = "Thomas", LastName = "Tjaden" },
+                new Person{ FirstMidName = "Friedrich", LastName = "Müller" },
+                new Person{ FirstMidName = "Diana", LastName = "Detering" },
+                new Person{ FirstMidName = "Haie", LastName = "Westhus" },
+                new Person{ FirstMidName = "Stanislaus", LastName = "Katczinsky" },
+                new Person{ FirstMidName = "Franz", LastName = "Kemmerich" },
+                new Person{ FirstMidName = "Karina", LastName = "Kantorek" },
+                new Person{ FirstMidName = "Albert", LastName = "Kropppremière classe." },
+                new Person{ FirstMidName = "Helene", LastName = "Himmelstoss" },
+                new Person{ FirstMidName = "Josef", LastName = "Hamacher" },
+                new Person{ FirstMidName = "Brigite", LastName = "Bertinck" },
+                new Person{ FirstMidName = "Paul", LastName = "Bäumer" }
+            });
+
+            context.SaveChanges();
+
+            var tags = new List<Tag>();
+
+            var industries = new List<string> { "E-commerce", "Logistics", "Automotive", "Retail", "IT", "Real Estate", "Medical Devices", "Food Service", "Manufacturer's Representatives", "Pharmaceutical", "Other" };
+            industries.ForEach(x => tags.Add(new Tag { TagType = TagType.Industry, Title = x }));
+
+            var languages = new List<string> { "German", "English", "Spanish", "Italian", "French", "Russian" };
+            languages.ForEach(x => tags.Add(new Tag { TagType = TagType.Language, Title = x }));
+
+            var skills = new List<string>
+            {
+                "Kaltakquise,Research,Cold Calling,Cold acquisition,Hunting",
+                "Recurring Business,Warm Calling,Warm Leads,Farming",
+                "Key Accounting,Großkunden Betreuun",
+                "Kundenberatung,Kundenbetreuung,Customer Care",
+                "VertriebsAußendienst,Terminieren,Kundepräsentationen,Kundentermine,Research neuer Kunden",
+                "Innendienst,Backoffice,Calling & Support",
+                "Lead Generation,Lead Generierung",
+                "Change Management",
+                "Sales Strategie,Vertriebsstrategien",
+                "Business Development,Sales Development",
+                "Marketing",
+                "SalesForce",
+                "CRM",
+                "Controlling",
+                "Angebotserstellung",
+                "Reporting",
+                "Kundenbindungskonzepte",
+                "Terminkoordinatio",
+                "Beratungsgespräche,Verkaufsgespräche,Sales Pitc",
+                "Business Strategie",
+                "Anfragenbearbeitung",
+                "Angebotsbearbeitung",
+                "Marketresearch,Marktanalyse,Wettbewerbsanalyse",
+                "Verkaufsoptimierung",
+                "Analyse und Bewertung von Kundenbedürfnissen",
+                "Verhandlungen",
+                "Sales Coaching",
+                "Teamführung,Teamlead"
+            };
+
+            foreach (var skill in skills)
+            {
+                var split = skill.Split(',');
+
+                tags.Add(new Tag
+                {
+                    TagType = TagType.Skill,
+                    Title = split[0],
+                    Synonyms = split.Length == 1 ? null : split.Skip(1).ToList()
+                });
+            }
+
+            context.Tags.AddRange(tags);
+            context.SaveChanges();
+
+            var enrollments = new Enrollment[]
+            {
+                new Enrollment{StudentID=1,CourseID=1050,Grade=Grade.A},
+                new Enrollment{StudentID=1,CourseID=4022,Grade=Grade.C},
+                new Enrollment{StudentID=1,CourseID=4041,Grade=Grade.B},
+                new Enrollment{StudentID=2,CourseID=1045,Grade=Grade.B},
+                new Enrollment{StudentID=2,CourseID=3141,Grade=Grade.F},
+                new Enrollment{StudentID=2,CourseID=2021,Grade=Grade.F},
+                new Enrollment{StudentID=3,CourseID=1050},
+                new Enrollment{StudentID=4,CourseID=1050},
+                new Enrollment{StudentID=4,CourseID=4022,Grade=Grade.F},
+                new Enrollment{StudentID=5,CourseID=4041,Grade=Grade.C},
+                new Enrollment{StudentID=6,CourseID=1045},
+                new Enrollment{StudentID=7,CourseID=3141,Grade=Grade.A},
+            };
+
+            context.Enrollments.AddRange(enrollments);
+            context.SaveChanges();
+        }
+    }
+}

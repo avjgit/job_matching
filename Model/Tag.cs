@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Leome.Model
 {
@@ -15,8 +12,9 @@ namespace Leome.Model
         public int ID { get; set; }
         public TagType TagType { get; set; }
         public string Title { get; set; }
+        public List<string> Synonyms { get; set; }
         public string Description { get; set; }
 
-        public ICollection<PersonTag> Tags { get; set; }
+        public ICollection<PersonTag> PersonTags { get; set; }
     }
 }
