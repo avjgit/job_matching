@@ -120,7 +120,7 @@ namespace Leome.Data
             });
             context.SaveChanges();
 
-            var prefix = new string[]{ "Rockstar", "Amazing", "Ninja", "Urgent", "Immediate", "Hiring" };
+            var prefix = new string[]{ "Rockstar", "Ninja", "Bright", "Unbreakable", "Never-stale", "Uttermost", "Cool", "Positive", "Nosy", "Frantic", "Hellish", "Tender", "Unboring", "Pathetic", "Hissing", "Violet", "Sweet", "Callous", "Visionary", "Educated", "Mighty", "Delicate", "Amazing", "Graceful", "Simplistic", "Enormous", "Excited", "Good", "Beneficial", "Hands-on", "Demonic", "Hardworking" };
 
             var jobs = new List<Job>();
             foreach (var company in context.Companies.Take(3))
