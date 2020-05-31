@@ -2,10 +2,10 @@
 @model Leome.Pages.People.IndexModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "People";
 }
 
-<h1>Index</h1>
+<h1>People</h1>
 
 <p>
     <a asp-page="Create">Create New</a>
@@ -14,7 +14,9 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Person[0].LastName)
+                <a asp-page="./Index" asp-route-sortOrder="@Model.NameSort">
+                    @Html.DisplayNameFor(model => model.Person[0].LastName)
+                </a>
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Person[0].FirstMidName)
@@ -35,7 +37,9 @@
                 @Html.DisplayNameFor(model => model.Person[0].PrefersRemote)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Person[0].BirthDate)
+                <a asp-page="./Index" asp-route-sortOrder="@Model.DateSort">
+                    @Html.DisplayNameFor(model => model.Person[0].BirthDate)
+                </a>
             </th>
             <th></th>
         </tr>

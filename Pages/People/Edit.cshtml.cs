@@ -26,7 +26,7 @@ namespace Leome.Pages.People
                 return NotFound();
             }
 
-            Person = await _context.People.FindAsync(m => m.ID == id);
+            Person = await _context.People.FindAsync(id);
 
             if (Person == null)
             {
