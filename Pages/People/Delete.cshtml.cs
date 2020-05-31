@@ -17,20 +17,26 @@ namespace Leome.Pages.People
 
         [BindProperty]
         public Person Person { get; set; }
+        public string ErrorMessage { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public async Task<IActionResult> OnGetAsync(int? id, bool? saveChangesError = false)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            Person = await _context.People.FirstOrDefaultAsync(m => m.ID == id);
+            Person = await _context.People.AsNoTracking().FirstOrDefaultAsync(m => m.ID == id);
 
             if (Person == null)
             {
                 return NotFound();
             }
+            if (saveChangesError.GetValueOrDefault())
+            {
+                ErrorMessage = "Delete failed. Try again";
+            }
+
             return Page();
         }
 
@@ -41,15 +47,25 @@ namespace Leome.Pages.People
                 return NotFound();
             }
 
-            Person = await _context.People.FindAsync(id);
+            var person = await _context.People.FindAsync(id);
 
-            if (Person != null)
+            if (person == null)
             {
-                _context.People.Remove(Person);
-                await _context.SaveChangesAsync();
+                return NotFound();
             }
 
-            return RedirectToPage("./Index");
+            try
+            {
+                _context.People.Remove(person);
+                await _context.SaveChangesAsync();
+                return RedirectToPage("./Index");
+            }
+            catch (DbUpdateException /* ex */)
+            {
+                //Log the error (uncomment ex variable name and write a log.)
+                return RedirectToAction("./Delete",
+                                     new { id, saveChangesError = true });
+            }
         }
     }
 }
