@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Leome.Model;
 
-namespace Leome.Pages.People
+namespace Leome.Pages.Companies
 {
     public class DetailsModel : PageModel
     {
@@ -15,7 +15,7 @@ namespace Leome.Pages.People
             _context = context;
         }
 
-        public Person Person { get; set; }
+        public Company Company { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -24,14 +24,9 @@ namespace Leome.Pages.People
                 return NotFound();
             }
 
-            Person = await _context
-                .People
-                .Include(x => x.PersonTags)
-                .ThenInclude(x => x.Tag)
-                .AsNoTracking()
-                .FirstOrDefaultAsync(m => m.ID == id);
+            Company = await _context.Companies.FirstOrDefaultAsync(m => m.ID == id);
 
-            if (Person == null)
+            if (Company == null)
             {
                 return NotFound();
             }

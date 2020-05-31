@@ -9,9 +9,15 @@ namespace Leome.Data
     {
         public static void Initialize(Context context)
         {
+            // todo: better data (City, etc)
             context.Database.EnsureCreated();
 
             if (context.People.Any()) return;   // DB has been seeded
+
+            var random = new Random();
+            var careerLevels = Enum.GetValues(typeof(CareerLevel));
+            var skillLevels = Enum.GetValues(typeof(SkillLevel));
+            var weights = Enum.GetValues(typeof(TagWeight));
 
             context.People.AddRange(new Person[]
             {
@@ -29,7 +35,6 @@ namespace Leome.Data
                 new Person{ FirstMidName = "Brigite", LastName = "Bertinck" },
                 new Person{ FirstMidName = "Paul", LastName = "Bäumer" }
             });
-
             context.SaveChanges();
 
             var tags = new List<Tag>();
@@ -83,30 +88,76 @@ namespace Leome.Data
                     SynonymsCSV = split.Length == 1 ? null : String.Join(",", split.Skip(1))
                 });
             }
-
             context.Tags.AddRange(tags);
             context.SaveChanges();
 
             var personTags = new List<PersonTag>();
 
-            var  random = new Random();
-            var skillLevels = Enum.GetValues(typeof(SkillLevel));
-            var weights = Enum.GetValues(typeof(TagWeight));
             foreach (var p in context.People)
             {
-                var randomTag = context.Tags.OrderBy(o => Guid.NewGuid()).First();
-                personTags.Add(new PersonTag
+                for (int i = 0; i < 8; i++)
                 {
-                    PersonID = p.ID,
-                    Person = p,
-                    TagID = randomTag.ID,
-                    Tag = randomTag,
-                    SkillLevel = (SkillLevel)skillLevels.GetValue(random.Next(skillLevels.Length)),
-                    Weight = (TagWeight)weights.GetValue(random.Next(weights.Length))
+                    var randomTag = context.Tags.OrderBy(o => Guid.NewGuid()).First();
+                    personTags.Add(new PersonTag
+                    {
+                        PersonID = p.ID,
+                        Person = p,
+                        TagID = randomTag.ID,
+                        Tag = randomTag,
+                        SkillLevel = (SkillLevel)skillLevels.GetValue(random.Next(skillLevels.Length)),
+                        Weight = (TagWeight)weights.GetValue(random.Next(weights.Length))
+                    });
+                }
+            };
+            context.PersonTags.AddRange(personTags);
+            context.SaveChanges();
+
+            context.Companies.AddRange(new Company[]
+            {
+                new Company{ CompanyName = "Audi" },
+                new Company{ CompanyName = "BASF" },
+                new Company{ CompanyName = "Continental" } //todo: get from wiki?
+            });
+            context.SaveChanges();
+
+            var prefix = new string[]{ "Rockstar", "Amazing", "Ninja", "Urgent", "Immediate", "Hiring" };
+
+            var jobs = new List<Job>();
+            foreach (var company in context.Companies.Take(3))
+            {
+                var careerLevel = (CareerLevel)careerLevels.GetValue(random.Next(careerLevels.Length));
+
+                jobs.Add(new Job
+                {
+                    CompanyID = company.ID,
+                    Company = company,
+                    CareerLevel = careerLevel,
+                    Title = $"{prefix[random.Next(skillLevels.Length)-1]} Sales {careerLevel}",
+                    Description = "Lorem ipsum vitae habitasse neque posuere conubia ligula ultricies, curabitur nullam vitae erat scelerisque feugiat ligula, adipiscing aliquam pulvinar dictumst aliquet mollis felis torquent magna rhoncus per faucibus aliquet tortor et ultrices nec semper cubilia.",
                 });
             };
+            context.Jobs.AddRange(jobs);
+            context.SaveChanges();
 
-            context.PersonTags.AddRange(personTags);
+            var jobTags = new List<JobTag>();
+            foreach (var j in context.Jobs)
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    var randomTag = context.Tags.OrderBy(o => Guid.NewGuid()).First();
+
+                    jobTags.Add(new JobTag
+                    {
+                        JobID = j.ID,
+                        Job = j,
+                        TagID = randomTag.ID,
+                        Tag = randomTag,
+                        SkillLevel = (SkillLevel)skillLevels.GetValue(random.Next(skillLevels.Length)),
+                        Weight = (TagWeight)weights.GetValue(random.Next(weights.Length))
+                    });
+                }
+            };
+            context.JobTags.AddRange(jobTags);
             context.SaveChanges();
         }
     }

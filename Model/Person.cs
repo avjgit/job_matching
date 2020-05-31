@@ -15,15 +15,9 @@ namespace Leome.Model
         public string CanRelocate { get; set; }
         public string PrefersRemote { get; set; }
         public DateTime BirthDate { get; set; }
-        public CurrentCareerLevel CurrentCareerLevel { get; set; }
+        public CareerLevel CurrentCareerLevel { get; set; }
         public ExperienceType ExperienceType { get; set; }
-        public string MyProperty { get; set; }
         public ICollection<PersonTag> PersonTags { get; set; }
-    }
-
-    public enum CurrentCareerLevel
-    {
-        Intern, Junior, Middle, Senior, Lead, Head
     }
 
     public enum ExperienceType

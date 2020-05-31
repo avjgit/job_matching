@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Leome.Model;
 
-namespace Leome.Pages.People
+namespace Leome.Pages.Companies
 {
     public class IndexModel : PageModel
     {
@@ -15,11 +15,11 @@ namespace Leome.Pages.People
             _context = context;
         }
 
-        public IList<Person> Person { get;set; }
+        public IList<Company> Company { get;set; }
 
         public async Task OnGetAsync()
         {
-            Person = await _context.People.ToListAsync();
+            Company = await _context.Companies.ToListAsync();
         }
     }
 }

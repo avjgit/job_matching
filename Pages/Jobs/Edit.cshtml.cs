@@ -2,10 +2,11 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Leome.Model;
 
-namespace Leome.Pages.Tags
+namespace Leome.Pages.Jobs
 {
     public class EditModel : PageModel
     {
@@ -17,7 +18,7 @@ namespace Leome.Pages.Tags
         }
 
         [BindProperty]
-        public Tag Tag { get; set; }
+        public Job Job { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -26,12 +27,14 @@ namespace Leome.Pages.Tags
                 return NotFound();
             }
 
-            Tag = await _context.Tags.FirstOrDefaultAsync(m => m.ID == id);
+            Job = await _context.Jobs
+                .Include(j => j.Company).FirstOrDefaultAsync(m => m.ID == id);
 
-            if (Tag == null)
+            if (Job == null)
             {
                 return NotFound();
             }
+           ViewData["CompanyID"] = new SelectList(_context.Companies, "ID", "ID");
             return Page();
         }
 
@@ -44,7 +47,7 @@ namespace Leome.Pages.Tags
                 return Page();
             }
 
-            _context.Attach(Tag).State = EntityState.Modified;
+            _context.Attach(Job).State = EntityState.Modified;
 
             try
             {
@@ -52,7 +55,7 @@ namespace Leome.Pages.Tags
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!TagExists(Tag.ID))
+                if (!JobExists(Job.ID))
                 {
                     return NotFound();
                 }
@@ -65,9 +68,9 @@ namespace Leome.Pages.Tags
             return RedirectToPage("./Index");
         }
 
-        private bool TagExists(int id)
+        private bool JobExists(int id)
         {
-            return _context.Tags.Any(e => e.ID == id);
+            return _context.Jobs.Any(e => e.ID == id);
         }
     }
 }

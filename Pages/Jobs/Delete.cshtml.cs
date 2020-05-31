@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Leome.Model;
 
-namespace Leome.Pages.Tags
+namespace Leome.Pages.Jobs
 {
     public class DeleteModel : PageModel
     {
@@ -16,7 +16,7 @@ namespace Leome.Pages.Tags
         }
 
         [BindProperty]
-        public Tag Tag { get; set; }
+        public Job Job { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -25,9 +25,10 @@ namespace Leome.Pages.Tags
                 return NotFound();
             }
 
-            Tag = await _context.Tags.FirstOrDefaultAsync(m => m.ID == id);
+            Job = await _context.Jobs
+                .Include(j => j.Company).FirstOrDefaultAsync(m => m.ID == id);
 
-            if (Tag == null)
+            if (Job == null)
             {
                 return NotFound();
             }
@@ -41,11 +42,11 @@ namespace Leome.Pages.Tags
                 return NotFound();
             }
 
-            Tag = await _context.Tags.FindAsync(id);
+            Job = await _context.Jobs.FindAsync(id);
 
-            if (Tag != null)
+            if (Job != null)
             {
-                _context.Tags.Remove(Tag);
+                _context.Jobs.Remove(Job);
                 await _context.SaveChangesAsync();
             }
 

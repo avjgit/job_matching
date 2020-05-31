@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Leome.Model;
 
-namespace Leome.Pages.Tags
+namespace Leome.Pages.Companies
 {
     public class EditModel : PageModel
     {
@@ -17,7 +17,7 @@ namespace Leome.Pages.Tags
         }
 
         [BindProperty]
-        public Tag Tag { get; set; }
+        public Company Company { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -26,9 +26,9 @@ namespace Leome.Pages.Tags
                 return NotFound();
             }
 
-            Tag = await _context.Tags.FirstOrDefaultAsync(m => m.ID == id);
+            Company = await _context.Companies.FirstOrDefaultAsync(m => m.ID == id);
 
-            if (Tag == null)
+            if (Company == null)
             {
                 return NotFound();
             }
@@ -44,7 +44,7 @@ namespace Leome.Pages.Tags
                 return Page();
             }
 
-            _context.Attach(Tag).State = EntityState.Modified;
+            _context.Attach(Company).State = EntityState.Modified;
 
             try
             {
@@ -52,7 +52,7 @@ namespace Leome.Pages.Tags
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!TagExists(Tag.ID))
+                if (!CompanyExists(Company.ID))
                 {
                     return NotFound();
                 }
@@ -65,9 +65,9 @@ namespace Leome.Pages.Tags
             return RedirectToPage("./Index");
         }
 
-        private bool TagExists(int id)
+        private bool CompanyExists(int id)
         {
-            return _context.Tags.Any(e => e.ID == id);
+            return _context.Companies.Any(e => e.ID == id);
         }
     }
 }

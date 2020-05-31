@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Leome.Model;
 
-namespace Leome.Pages.Tags
+namespace Leome.Pages.Companies
 {
     public class CreateModel : PageModel
     {
@@ -20,7 +20,7 @@ namespace Leome.Pages.Tags
         }
 
         [BindProperty]
-        public Tag Tag { get; set; }
+        public Company Company { get; set; }
 
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://aka.ms/RazorPagesCRUD.
@@ -31,7 +31,7 @@ namespace Leome.Pages.Tags
                 return Page();
             }
 
-            _context.Tags.Add(Tag);
+            _context.Companies.Add(Company);
             await _context.SaveChangesAsync();
 
             return RedirectToPage("./Index");
