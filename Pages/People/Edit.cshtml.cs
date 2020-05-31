@@ -26,7 +26,7 @@ namespace Leome.Pages.People
                 return NotFound();
             }
 
-            Person = await _context.People.FirstOrDefaultAsync(m => m.ID == id);
+            Person = await _context.People.FindAsync(m => m.ID == id);
 
             if (Person == null)
             {
@@ -37,32 +37,30 @@ namespace Leome.Pages.People
 
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(int id)
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            _context.Attach(Person).State = EntityState.Modified;
+            var personToUpdate = await _context.People.FindAsync(id);
 
-            try
+            if (personToUpdate == null)
+            {
+                return NotFound();
+            }
+
+            if (await TryUpdateModelAsync<Person>(
+                personToUpdate,
+                "person",
+                s => s.FirstMidName, s => s.LastName))
             {
                 await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PersonExists(Person.ID))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return RedirectToPage("./Index");
             }
 
-            return RedirectToPage("./Index");
+            return Page();
         }
 
         private bool PersonExists(int id)

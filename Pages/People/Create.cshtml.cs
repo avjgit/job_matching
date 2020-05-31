@@ -31,10 +31,19 @@ namespace Leome.Pages.People
                 return Page();
             }
 
-            _context.People.Add(Person);
-            await _context.SaveChangesAsync();
+            var emptyPerson = new Person();
 
-            return RedirectToPage("./Index");
+            if (await TryUpdateModelAsync<Person>(
+                emptyPerson,
+                "person",   // Prefix for form value.
+                s => s.FirstMidName, s => s.LastName))
+            {
+                _context.People.Add(emptyPerson);
+                await _context.SaveChangesAsync();
+                return RedirectToPage("./Index");
+            }
+
+            return Page();
         }
     }
 }
