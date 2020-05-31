@@ -28,7 +28,12 @@ namespace Leome.Pages.People
                 return NotFound();
             }
 
-            Person = await _context.People.FirstOrDefaultAsync(m => m.ID == id);
+            Person = await _context
+                .People
+                .Include(x => x.PersonTags)
+                .ThenInclude(x => x.Tag)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.ID == id);
 
             if (Person == null)
             {

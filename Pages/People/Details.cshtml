@@ -59,6 +59,32 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Person.BirthDate)
         </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Person.PersonTags)
+        </dt>
+        <dd class="col-sm-10">
+            <table class="table">
+                <tr>
+                    <th>Tag</th>
+                    <th>Skill</th>
+                    <th>Weight</th>
+                </tr>
+                @foreach (var item in Model.Person.PersonTags)
+                {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Tag.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SkillLevel)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Weight)
+                </td>
+            </tr>
+                }
+            </table>
+        </dd>
     </dl>
 </div>
 <div>

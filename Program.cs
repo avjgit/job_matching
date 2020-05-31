@@ -1,10 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Leome.Data;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -30,7 +26,9 @@ namespace Leome
                 try
                 {
                     var context = services.GetRequiredService<Context>();
-                    context.Database.EnsureCreated();
+                    //context.Database.EnsureCreated();
+                    // run the following command in the Package Manager Console: Drop-Database
+                    DbInitializer.Initialize(context);
                 }
                 catch (Exception ex)
                 {

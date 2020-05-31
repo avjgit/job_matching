@@ -80,7 +80,7 @@ namespace Leome.Data
                 {
                     TagType = TagType.Skill,
                     Title = split[0],
-                    Synonyms = split.Length == 1 ? null : split.Skip(1).ToList()
+                    SynonymsCSV = split.Length == 1 ? null : String.Join(",", split.Skip(1))
                 });
             }
 
@@ -91,6 +91,7 @@ namespace Leome.Data
 
             var  random = new Random();
             var skillLevels = Enum.GetValues(typeof(SkillLevel));
+            var weights = Enum.GetValues(typeof(TagWeight));
             foreach (var p in context.People)
             {
                 var randomTag = context.Tags.OrderBy(o => Guid.NewGuid()).First();
@@ -101,7 +102,7 @@ namespace Leome.Data
                     TagID = randomTag.ID,
                     Tag = randomTag,
                     SkillLevel = (SkillLevel)skillLevels.GetValue(random.Next(skillLevels.Length)),
-                    Weight = random.Next(100)
+                    Weight = (TagWeight)weights.GetValue(random.Next(weights.Length))
                 });
             };
 

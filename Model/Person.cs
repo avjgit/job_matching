@@ -18,7 +18,7 @@ namespace Leome.Model
         public CurrentCareerLevel CurrentCareerLevel { get; set; }
         public ExperienceType ExperienceType { get; set; }
         public string MyProperty { get; set; }
-        public ICollection<PersonTag> Tags { get; set; }
+        public ICollection<PersonTag> PersonTags { get; set; }
     }
 
     public enum CurrentCareerLevel
