@@ -8,9 +8,9 @@ namespace Leome.Pages.Jobs
 {
     public class DetailsModel : PageModel
     {
-        private readonly Leome.Data.Context _context;
+        private readonly Data.Context _context;
 
-        public DetailsModel(Leome.Data.Context context)
+        public DetailsModel(Data.Context context)
         {
             _context = context;
         }

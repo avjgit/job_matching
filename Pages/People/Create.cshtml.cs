@@ -7,9 +7,9 @@ namespace Leome.Pages.People
 {
     public class CreateModel : PageModel
     {
-        private readonly Leome.Data.Context _context;
+        private readonly Data.Context _context;
 
-        public CreateModel(Leome.Data.Context context)
+        public CreateModel(Data.Context context)
         {
             _context = context;
         }

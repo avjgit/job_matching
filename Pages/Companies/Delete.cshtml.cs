@@ -8,9 +8,9 @@ namespace Leome.Pages.Companies
 {
     public class DeleteModel : PageModel
     {
-        private readonly Leome.Data.Context _context;
+        private readonly Data.Context _context;
 
-        public DeleteModel(Leome.Data.Context context)
+        public DeleteModel(Data.Context context)
         {
             _context = context;
         }

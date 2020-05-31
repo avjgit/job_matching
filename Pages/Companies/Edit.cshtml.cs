@@ -9,9 +9,9 @@ namespace Leome.Pages.Companies
 {
     public class EditModel : PageModel
     {
-        private readonly Leome.Data.Context _context;
+        private readonly Data.Context _context;
 
-        public EditModel(Leome.Data.Context context)
+        public EditModel(Data.Context context)
         {
             _context = context;
         }

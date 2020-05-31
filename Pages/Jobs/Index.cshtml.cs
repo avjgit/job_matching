@@ -8,9 +8,9 @@ namespace Leome.Pages.Jobs
 {
     public class IndexModel : PageModel
     {
-        private readonly Leome.Data.Context _context;
+        private readonly Data.Context _context;
 
-        public IndexModel(Leome.Data.Context context)
+        public IndexModel(Data.Context context)
         {
             _context = context;
         }
