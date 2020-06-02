@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Leome.Model;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Leome.Pages.Companies
 {
@@ -16,6 +18,7 @@ namespace Leome.Pages.Companies
         }
 
         public Company Company { get; set; }
+        public List<Job> Jobs { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -24,12 +27,17 @@ namespace Leome.Pages.Companies
                 return NotFound();
             }
 
-            Company = await _context.Companies.FirstOrDefaultAsync(m => m.ID == id);
+            Company = await _context.Companies
+                                .Include(i => i.Jobs)
+                    .ThenInclude(i => i.JobTags)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.ID == id);
 
             if (Company == null)
             {
                 return NotFound();
             }
+            Jobs = Company.Jobs.ToList();
             return Page();
         }
     }
