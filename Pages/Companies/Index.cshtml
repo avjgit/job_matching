@@ -83,32 +83,3 @@
         }
     </tbody>
 </table>
-
-@if (Model.CompaniesWithJobs.Candidates != null)
-{
-    <h3>
-        Best candidatees
-    </h3>
-    <table class="table">
-        <tr>
-            <th>Name</th>
-        </tr>
-        @foreach (var item in Model.CompaniesWithJobs.Candidates)
-        {
-    <tr>
-        <td>
-            @item.FirstMidName
-        </td>
-        <td>
-            @item.LastName
-        </td>
-        <td>
-            @item.CurrentCareerLevel
-        </td>
-        <td>
-            @item.ExperienceType
-        </td>
-    </tr>
-        }
-    </table>
-}

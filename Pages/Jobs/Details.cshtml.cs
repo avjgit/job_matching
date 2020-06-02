@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Leome.Model;
+using System.Collections.Generic;
 
 namespace Leome.Pages.Jobs
 {
@@ -16,6 +17,8 @@ namespace Leome.Pages.Jobs
         }
 
         public Job Job { get; set; }
+        public IList<Person> Candidates { get; set; }
+
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -25,12 +28,18 @@ namespace Leome.Pages.Jobs
             }
 
             Job = await _context.Jobs
-                .Include(j => j.Company).FirstOrDefaultAsync(m => m.ID == id);
+                .Include(j => j.Company)
+                .Include(j => j.JobTags)
+                .FirstOrDefaultAsync(m => m.ID == id);
 
             if (Job == null)
             {
                 return NotFound();
             }
+            var people = _context.People.Include(i => i.PersonTags).AsNoTracking();
+
+            Candidates = await GetBest.Candidates(Job, people);
+
             return Page();
         }
     }
