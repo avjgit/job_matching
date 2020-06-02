@@ -23,13 +23,21 @@ namespace Leome.Pages.People
 
         public IList<Person> Person { get;set; }
 
-        public async Task OnGetAsync(string sortOrder)
+        public async Task OnGetAsync(string sortOrder, string searchString)
         {
             NameSort = string.IsNullOrWhiteSpace(sortOrder) ? "name_desc" : "";
             DateSort = sortOrder == "Date" ? "date_desc" : "Date";
 
+            CurrentFilter = searchString;
+
             IQueryable<Person> people = from s in _context.People
                                              select s;
+
+            if (!String.IsNullOrWhiteSpace(searchString))
+            {
+                people = people.Where(s => s.LastName.Contains(searchString)
+                                       || s.FirstMidName.Contains(searchString));
+            }
 
             switch (sortOrder)
             {
