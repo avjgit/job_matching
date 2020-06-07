@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Leome.Model;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Leome.Pages.Jobs
 {
-    public class CreateModel : PageModel
+    public class CreateModel : CompaniesNamePageModel
     {
         private readonly Data.Context _context;
 
@@ -17,7 +18,8 @@ namespace Leome.Pages.Jobs
 
         public IActionResult OnGet()
         {
-        ViewData["CompanyID"] = new SelectList(_context.Companies, "ID", "ID");
+            PopulateCompaniesDropDownList(_context);
+
             return Page();
         }
 
@@ -28,15 +30,22 @@ namespace Leome.Pages.Jobs
         // more details, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-            if (!ModelState.IsValid)
+            var emptyJob = new Job();
+
+            if (await TryUpdateModelAsync<Job>(
+                 emptyJob,
+                 "job",   // Prefix for form value.
+                 s => s.ID, s => s.CompanyID, s => s.Title, s => s.CareerLevel, s => s.City,
+                 s => s.Description))
             {
-                return Page();
+                _context.Jobs.Add(emptyJob);
+                await _context.SaveChangesAsync();
+                return RedirectToPage("./Index");
             }
 
-            _context.Jobs.Add(Job);
-            await _context.SaveChangesAsync();
-
-            return RedirectToPage("./Index");
+            // Select DepartmentID if TryUpdateModelAsync fails.
+            PopulateCompaniesDropDownList(_context, emptyJob.CompanyID);
+            return Page();
         }
     }
 }
