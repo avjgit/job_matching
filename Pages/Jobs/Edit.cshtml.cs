@@ -8,7 +8,7 @@ using Leome.Model;
 
 namespace Leome.Pages.Jobs
 {
-    public class EditModel : PageModel
+    public class EditModel : CompaniesNamePageModel
     {
         private readonly Data.Context _context;
 
@@ -34,38 +34,38 @@ namespace Leome.Pages.Jobs
             {
                 return NotFound();
             }
-           ViewData["CompanyID"] = new SelectList(_context.Companies, "ID", "ID");
+            PopulateCompaniesDropDownList(_context, Job.CompanyID);
             return Page();
         }
 
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(int? id)
         {
-            if (!ModelState.IsValid)
+            if (id == null)
             {
-                return Page();
+                return NotFound();
             }
 
-            _context.Attach(Job).State = EntityState.Modified;
+            var jobToUpdate = await _context.Jobs.FindAsync(id);
 
-            try
+            if (jobToUpdate == null)
+            {
+                return NotFound();
+            }
+
+            if (await TryUpdateModelAsync<Job>(
+                 jobToUpdate,
+                 "course",   // Prefix for form value.                 
+                 s => s.ID, s => s.CompanyID, s => s.Title, s => s.CareerLevel, s => s.City,
+                 s => s.Description))
             {
                 await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!JobExists(Job.ID))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return RedirectToPage("./Index");
             }
 
-            return RedirectToPage("./Index");
+            PopulateCompaniesDropDownList(_context, jobToUpdate.CompanyID);
+            return Page();
         }
 
         private bool JobExists(int id)
