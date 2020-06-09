@@ -12,6 +12,12 @@ namespace Leome.Model
         Weight1, Weight2, Weight3, Weight5, Weight8, Weight13, Weight20, Weight40, Weight100
     }
 
+    public enum SkillLevel
+    {
+        OneStar, TwoStars, ThreeStars, FourStars, FiveStars
+    }
+
+
     public class Tag
     {
         public int ID { get; set; }

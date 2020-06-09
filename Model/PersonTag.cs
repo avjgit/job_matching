@@ -1,10 +1,5 @@
 ﻿namespace Leome.Model
 {
-    public enum SkillLevel
-    {
-        OneStar, TwoStars, ThreeStars, FourStars, FiveStars
-    }
-
     public class PersonTag
     {
         public int ID { get; set; }
