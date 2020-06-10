@@ -8,37 +8,58 @@ using System.Threading.Tasks;
 
 namespace Leome.Pages
 {
+    public class Match
+    {
+        public Person Person { get; set; }
+        public IList<PersonTag> MatchedTags { get; set; }
+        public IList<PersonTag> OtherTags { get; set; }
+        public int Score { get; set; }
+    }
+
     public static class GetBest
     {
-        public async static Task<IList<Person>> Candidates(Job job, IQueryable<Person> people)
+        public async static Task<IList<Match>> Candidates(Job job, IQueryable<Person> people)
         {
-            var personsWithScores = new List<(Person person, int score)>();
+            var matches = new List<Match>();
 
             foreach (var person in people)
             {
-                int personsScore = 0;
+                var match = new Match()
+                {
+                    Person = person,
+                    MatchedTags = new List<PersonTag>(),
+                    OtherTags = new List<PersonTag>(),
+                    Score = 0
+                };
+
                 foreach (var personTag in person.PersonTags)
                 {
                     var jobTag = job.JobTags.FirstOrDefault(x => x.TagID == personTag.TagID);
+
                     if (jobTag != null)
                     {
-                        personsScore += 1; // for now, use same even weights; todo: use jobTag.Weight, also jobTag.SkillLevel
+                        match.Score += 1; // for now, use same even weights; todo: use jobTag.Weight, also jobTag.SkillLevel
+                        match.MatchedTags.Add(personTag);
+                    }
+                    else
+                    {
+                        match.OtherTags.Add(personTag);
                     }
                 }
-                personsWithScores.Add((person, personsScore));
+                matches.Add(match);
             }
 
             const int topPersonsCount = 3;
             
-            var personsRating = personsWithScores.OrderByDescending(x => x.score);
-            var maxScore = personsRating.First().score;
-            var equalToMax = personsRating.Where(x => x.score == maxScore);
+            var personsRating = matches.OrderByDescending(x => x.Score);
+            var maxScore = personsRating.First().Score;
+            var equalToMax = personsRating.Where(x => x.Score == maxScore);
 
             if (equalToMax.Count() > topPersonsCount)
             {
-                return equalToMax.Select(x => x.person).ToList();
+                return equalToMax.ToList();
             }
-            return personsRating.Take(topPersonsCount).Select(x => x.person).ToList();
+            return personsRating.Take(topPersonsCount).ToList();
         }
     }
 }

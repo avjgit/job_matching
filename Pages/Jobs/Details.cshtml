@@ -60,29 +60,44 @@
     <table class="table">
         <tr>
             <th>Name</th>
+            <th></th>
+            <th>Current carrer level</th>
+            <th>Experience type</th>
         </tr>
         @foreach (var item in Model.Candidates)
         {
             <tr>
                 <td>
-                    @item.FirstMidName
+                    @item.Person.FirstMidName
                 </td>
                 <td>
-                    @item.LastName
+                    @item.Person.LastName
                 </td>
                 <td>
-                    @item.CurrentCareerLevel
+                    @item.Person.CurrentCareerLevel
                 </td>
                 <td>
-                    @item.ExperienceType
+                    @item.Person.ExperienceType
                 </td>
                 <td>
-                    @foreach (var tag in item.PersonTags)
-                    {
-                        <div>
-                            @tag.Tag.TagType : @tag.Tag.Title
-                        </div>
-                    }
+                    <h6>Matched tags:</h6>
+                    <ol>
+                        @foreach (var tag in item.MatchedTags)
+                        {
+                            <li>
+                                @tag.Tag.TagType : @tag.Tag.Title
+                            </li>
+                        }
+                    </ol>
+                    <h6>Other tags:</h6>
+                    <ol>
+                        @foreach (var tag in item.OtherTags)
+                        {
+                            <li>
+                                @tag.Tag.TagType : @tag.Tag.Title
+                            </li>
+                        }
+                    </ol>
                 </td>
             </tr>
         }

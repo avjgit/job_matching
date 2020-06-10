@@ -17,7 +17,7 @@ namespace Leome.Pages.Jobs
         }
 
         public Job Job { get; set; }
-        public IList<Person> Candidates { get; set; }
+        public IList<Match> Candidates { get; set; }
 
 
         public async Task<IActionResult> OnGetAsync(int? id)
