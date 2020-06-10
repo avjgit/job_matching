@@ -4,10 +4,11 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Leome.Model;
 using System.Security.Cryptography.X509Certificates;
+using System.Collections.Generic;
 
 namespace Leome.Pages.Jobs
 {
-    public class CreateModel : CompaniesNamePageModel
+    public class CreateModel : JobPageModel
     {
         private readonly Data.Context _context;
 
@@ -19,7 +20,15 @@ namespace Leome.Pages.Jobs
         public IActionResult OnGet()
         {
             PopulateCompaniesDropDownList(_context);
+            var job = new Job
+            {
+                JobTags = new List<JobTag>()
+            };
 
+            // Provides an empty collection for the foreach loop
+            // foreach (var course in Model.AssignedCourseDataList)
+            // in the Create Razor page.
+            PopulateJobTags(_context, job);
             return Page();
         }
 
@@ -28,23 +37,36 @@ namespace Leome.Pages.Jobs
 
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(
+            string[] selectedTags)
         {
-            var emptyJob = new Job();
+            var newJob = new Job();
+            if (selectedTags != null)
+            {
+                newJob.JobTags = new List<JobTag>();
+                foreach (var tag in selectedTags)
+                {
+                    var tagtoAdd = new JobTag
+                    {
+                        TagID = int.Parse(tag)
+                    };
+                    newJob.JobTags.Add(tagtoAdd);
+                }
+            }
 
             if (await TryUpdateModelAsync<Job>(
-                 emptyJob,
-                 "job",   // Prefix for form value.
+                newJob,
+                "job",
                  s => s.ID, s => s.CompanyID, s => s.Title, s => s.CareerLevel, s => s.City,
                  s => s.Description))
             {
-                _context.Jobs.Add(emptyJob);
+                _context.Jobs.Add(newJob);
                 await _context.SaveChangesAsync();
                 return RedirectToPage("./Index");
             }
-
-            // Select DepartmentID if TryUpdateModelAsync fails.
-            PopulateCompaniesDropDownList(_context, emptyJob.CompanyID);
+            UpdateJobTags(_context, selectedTags, newJob);
+            PopulateJobTags(_context, newJob);
+            PopulateCompaniesDropDownList(_context, newJob.CompanyID);
             return Page();
         }
     }

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Leome.Model;
+using System.Linq;
 
 namespace Leome.Pages.People
 {
@@ -47,17 +48,24 @@ namespace Leome.Pages.People
                 return NotFound();
             }
 
-            var person = await _context.People.FindAsync(id);
+            Person = await _context.People
+                .Include(x=>x.PersonTags).SingleAsync(x => x.ID == id); ;
 
-            if (person == null)
+            if (Person == null)
             {
                 return NotFound();
             }
 
             try
             {
-                _context.People.Remove(person);
+                var personTags = await _context.PersonTags
+                    .Where(d => d.PersonID == id)
+                    .ToListAsync();
+                personTags.ForEach(d => _context.PersonTags.Remove(d));
+
+                _context.People.Remove(Person);
                 await _context.SaveChangesAsync();
+
                 return RedirectToPage("./Index");
             }
             catch (DbUpdateException /* ex */)

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Leome.Model;
+using System.Linq;
 
 namespace Leome.Pages.Companies
 {
@@ -45,6 +46,20 @@ namespace Leome.Pages.Companies
 
             if (Company != null)
             {
+                var jobs = await _context.Jobs
+                    .Where(d => d.CompanyID == id)
+                    .ToListAsync();
+
+                foreach (var job in jobs)
+                {
+                    var jobtags = await _context.JobTags
+                        .Where(d => d.JobID == job.ID)
+                        .ToListAsync();
+                    jobtags.ForEach(d => _context.JobTags.Remove(d));
+
+                    _context.Jobs.Remove(job);
+                }
+
                 _context.Companies.Remove(Company);
                 await _context.SaveChangesAsync();
             }

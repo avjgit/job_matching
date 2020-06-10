@@ -7,7 +7,7 @@ using Leome.Model;
 
 namespace Leome.Pages.People
 {
-    public class EditModel : PageModel
+    public class EditModel : PersonPageModel
     {
         private readonly Data.Context _context;
 
@@ -26,25 +26,33 @@ namespace Leome.Pages.People
                 return NotFound();
             }
 
-            Person = await _context.People.FindAsync(id);
+            Person = await _context.People
+                .Include(x => x.PersonTags)
+                .ThenInclude(x => x.Tag)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.ID == id);
 
             if (Person == null)
             {
                 return NotFound();
             }
+            PopulatePersonTags(_context, Person);
             return Page();
         }
 
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync(int id)
+        public async Task<IActionResult> OnPostAsync(int? id, string[] selectedTags)
         {
-            if (!ModelState.IsValid)
+            if (id == null)
             {
-                return Page();
+                return NotFound();
             }
 
-            var personToUpdate = await _context.People.FindAsync(id);
+            var personToUpdate = await _context.People
+                .Include(x => x.PersonTags)
+                    .ThenInclude(x => x.Tag)
+                .FirstOrDefaultAsync(s => s.ID == id);
 
             if (personToUpdate == null)
             {
@@ -56,9 +64,12 @@ namespace Leome.Pages.People
                 "person",
                 s => s.FirstMidName, s => s.LastName))
             {
+                UpdatePersonTags(_context, selectedTags, personToUpdate);
                 await _context.SaveChangesAsync();
                 return RedirectToPage("./Index");
             }
+            UpdatePersonTags(_context, selectedTags, personToUpdate);
+            PopulatePersonTags(_context, personToUpdate);
 
             return Page();
         }

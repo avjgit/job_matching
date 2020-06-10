@@ -2,10 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Leome.Model;
+using System.Collections.Generic;
 
 namespace Leome.Pages.People
 {
-    public class CreateModel : PageModel
+    public class CreateModel : PersonPageModel
     {
         private readonly Data.Context _context;
 
@@ -16,6 +17,13 @@ namespace Leome.Pages.People
 
         public IActionResult OnGet()
         {
+            var person = new Person
+            {
+                PersonTags = new List<PersonTag>()
+            };
+
+            PopulatePersonTags(_context, person);
+
             return Page();
         }
 
@@ -24,25 +32,38 @@ namespace Leome.Pages.People
 
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(
+            string[] selectedTags)
         {
-            if (!ModelState.IsValid)
+            var newPerson = new Person();
+            if (selectedTags != null)
             {
-                return Page();
+                newPerson.PersonTags = new List<PersonTag>();
+                foreach (var tag in selectedTags)
+                {
+                    var tagToAdd = new PersonTag
+                    {
+                        TagID = int.Parse(tag)
+                    };
+                    newPerson.PersonTags.Add(tagToAdd);
+                }
             }
 
-            var emptyPerson = new Person();
-
             if (await TryUpdateModelAsync<Person>(
-                emptyPerson,
-                "person",   // Prefix for form value.
-                s => s.FirstMidName, s => s.LastName))
+                newPerson,
+                "person",
+                 s => s.ID, s => s.BirthDate, s => s.CanRelocate, s => s.City,
+                 s => s.CurrentCareerLevel, s => s.Email, s => s.ExperienceType,
+                 s => s.FirstMidName, s => s.LastName, s => s.Phone, s => s.ShortBio
+                 ))
             {
-                _context.People.Add(emptyPerson);
+                _context.People.Add(newPerson);
                 await _context.SaveChangesAsync();
                 return RedirectToPage("./Index");
             }
-
+            
+            UpdatePersonTags(_context, selectedTags, newPerson);
+            PopulatePersonTags(_context, newPerson);
             return Page();
         }
     }

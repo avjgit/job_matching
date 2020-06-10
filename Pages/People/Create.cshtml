@@ -54,9 +54,35 @@
                 <span asp-validation-for="Person.BirthDate" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <div class="table">
+                    <table>
+                        <tr>
+                            @{
+                                int cnt = 0;
+
+                                foreach (var tag in Model.SelectedTags)
+                                {
+                                    if (cnt++ % 3 == 0)
+                                    {
+                                    @:</tr><tr>
+                                    }
+                                    @:<td>
+                                        <input type="checkbox"
+                                               name="selectedTags"
+                                               value="@tag.PersonTagId"
+                                               @(Html.Raw(tag.Assigned ? "checked=\"checked\"" : "")) />
+                                        @tag.PersonTag.Tag.TagType @: @tag.JobTag.Tag.Title
+                                    @:</td>
+                                }
+                            @:</tr>
+                            }
+                        </table>
+                    </div>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
-        </form>
+            </form>
     </div>
 </div>
 

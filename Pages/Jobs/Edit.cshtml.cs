@@ -1,14 +1,13 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Leome.Model;
+using System;
 
 namespace Leome.Pages.Jobs
 {
-    public class EditModel : CompaniesNamePageModel
+    public class EditModel : JobPageModel
     {
         private readonly Data.Context _context;
 
@@ -28,26 +27,35 @@ namespace Leome.Pages.Jobs
             }
 
             Job = await _context.Jobs
-                .Include(j => j.Company).FirstOrDefaultAsync(m => m.ID == id);
+                .Include(j => j.Company)
+                .Include(x => x.JobTags)
+                .ThenInclude(x => x.Tag)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.ID == id);
 
             if (Job == null)
             {
                 return NotFound();
             }
             PopulateCompaniesDropDownList(_context, Job.CompanyID);
+            PopulateJobTags(_context, Job);
             return Page();
         }
 
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync(int? id)
+        public async Task<IActionResult> OnPostAsync(int? id, string[] selectedTags)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var jobToUpdate = await _context.Jobs.FindAsync(id);
+            var jobToUpdate = await _context.Jobs
+                .Include(i => i.Company)
+                .Include(i => i.JobTags)
+                    .ThenInclude(i => i.Tag)
+                .FirstOrDefaultAsync(s => s.ID == id);
 
             if (jobToUpdate == null)
             {
@@ -55,16 +63,19 @@ namespace Leome.Pages.Jobs
             }
 
             if (await TryUpdateModelAsync<Job>(
-                 jobToUpdate,
-                 "course",   // Prefix for form value.                 
+                jobToUpdate,
+                "job",
                  s => s.ID, s => s.CompanyID, s => s.Title, s => s.CareerLevel, s => s.City,
                  s => s.Description))
             {
+                UpdateJobTags(_context, selectedTags, jobToUpdate);
                 await _context.SaveChangesAsync();
                 return RedirectToPage("./Index");
             }
-
+            UpdateJobTags(_context, selectedTags, jobToUpdate);
+            PopulateJobTags(_context, jobToUpdate);
             PopulateCompaniesDropDownList(_context, jobToUpdate.CompanyID);
+
             return Page();
         }
 

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Leome.Model;
+using System.Linq;
 
 namespace Leome.Pages.Jobs
 {
@@ -42,10 +43,16 @@ namespace Leome.Pages.Jobs
                 return NotFound();
             }
 
-            Job = await _context.Jobs.FindAsync(id);
+            Job = await _context.Jobs.Include(x => x.JobTags).SingleAsync(x => x.ID == id);
 
             if (Job != null)
             {
+
+                var jobtags = await _context.JobTags
+                    .Where(d => d.JobID == id)
+                    .ToListAsync();
+                jobtags.ForEach(d => _context.JobTags.Remove(d));
+
                 _context.Jobs.Remove(Job);
                 await _context.SaveChangesAsync();
             }
