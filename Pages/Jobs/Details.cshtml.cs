@@ -30,13 +30,19 @@ namespace Leome.Pages.Jobs
             Job = await _context.Jobs
                 .Include(j => j.Company)
                 .Include(j => j.JobTags)
+                    .ThenInclude(x => x.Tag)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
 
             if (Job == null)
             {
                 return NotFound();
             }
-            var people = _context.People.Include(i => i.PersonTags).AsNoTracking();
+
+            var people = _context.People
+                .Include(i => i.PersonTags)
+                    .ThenInclude(x => x.Tag)
+                .AsNoTracking();
 
             Candidates = await GetBest.Candidates(Job, people);
 

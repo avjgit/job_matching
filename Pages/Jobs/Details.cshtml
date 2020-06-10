@@ -38,6 +38,20 @@
     </dl>
 </div>
 
+<h5>
+    Tags:
+</h5>
+@{
+    <ol>
+        @foreach (var tag in Model.Job.JobTags.OrderBy(x=>x.Tag.TagType).ThenBy(x=>x.Tag.Title))
+        {
+        <li>
+            @tag.Tag.TagType : @tag.Tag.Title
+        </li>
+        }
+    </ol>
+}
+
 @if (Model.Candidates != null)
 {
     <h3>
@@ -61,6 +75,14 @@
                 </td>
                 <td>
                     @item.ExperienceType
+                </td>
+                <td>
+                    @foreach (var tag in item.PersonTags)
+                    {
+                        <div>
+                            @tag.Tag.TagType : @tag.Tag.Title
+                        </div>
+                    }
                 </td>
             </tr>
         }

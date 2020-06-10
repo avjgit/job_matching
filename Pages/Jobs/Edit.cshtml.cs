@@ -29,7 +29,7 @@ namespace Leome.Pages.Jobs
             Job = await _context.Jobs
                 .Include(j => j.Company)
                 .Include(x => x.JobTags)
-                .ThenInclude(x => x.Tag)
+                    .ThenInclude(x => x.Tag)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
 
